@@ -583,6 +583,46 @@ export default {
         }
       })
     })
+
+    // -> Add collapse functionality to blockquotes
+    this.$nextTick(() => {
+      const lang = {
+        'pl': 'Dialog - Rozwiń',
+        'en': 'Dialog - Expand',
+        'pt-br': 'Diálogo - expandir'
+      }
+      const collapseClassName = 'collapse'
+
+      const createCoverBlock = () => {
+        const localization = location.pathname.split('/')[1] || 'en'
+        const cover = document.createElement('div')
+        cover.classList.add('cover')
+        cover.textContent = lang[localization]
+
+        return cover
+      }
+
+      const createCollase = (root) => {
+        root.classList.add(collapseClassName)
+        const cover = createCoverBlock()
+        root.insertBefore(cover, root.firstChild)
+      }
+
+      const removeCollapse = (root) => {
+        root.classList.remove(collapseClassName)
+        root.querySelector('.contents blockquote div.cover').remove()
+      }
+
+      const initializeCollapse = (el) => {
+        createCollase(el)
+
+        el.onclick = () => {
+          el.classList.contains(collapseClassName) ? removeCollapse(el) : createCollase(el)
+        }
+      }
+
+      this.$refs.container.querySelectorAll('blockquote').forEach(quote => initializeCollapse(quote))
+    })
   },
   methods: {
     goHome () {
