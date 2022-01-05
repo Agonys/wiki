@@ -572,6 +572,35 @@ export default {
         })
       }
     }
+    
+    // -> handle important message marking
+    this.$nextTick(() => {
+      this.$refs.container.querySelectorAll('p').forEach(paragraph => {
+        if (paragraph.textContent.startsWith('!!!')) {
+          paragraph.classList.add('custom--important')
+          paragraph.textContent = paragraph.textContent.substring(3)
+        }
+      })
+    })
+
+    // -> handle gallery creation from #gallery-open and #gallery-close tags
+    this.$nextTick(() => {
+
+      const gallery = {
+        open: {
+          regex: '<p>#gallery-open</p>',
+          replacement: '<div class="custom--gallery">'
+        },
+        close: {
+        regex: '<p>#gallery-close</p>',
+          replacement: '</div>'
+        }
+      }
+
+      this.$refs.container.outerHTML = this.$refs.container.outerHTML
+        .replaceAll(gallery.open.regex, gallery.open.replacement)
+        .replaceAll(gallery.close.regex, gallery.close.replacement)
+    })
 
     // -> Handle anchor links within the page contents
     this.$nextTick(() => {
@@ -622,36 +651,6 @@ export default {
       }
 
       this.$refs.container.querySelectorAll('blockquote').forEach(quote => initializeCollapse(quote))
-    })
-
-    // -> handle important message marking
-    this.$nextTick(() => {
-      this.$refs.container.querySelectorAll('p').forEach(paragraph => {
-        if (paragraph.textContent.startsWith('!!!')) {
-          paragraph.classList.add('custom--important')
-          paragraph.textContent = paragraph.textContent.substring(3)
-        }
-      })
-    })
-
-    // -> handle gallery creation from #gallery-open and #gallery-close tags
-    this.$nextTick(() => {
-
-      const gallery = {
-        open: {
-          regex: '<p>#gallery-open</p>',
-          replacement: '<div class="custom--gallery">'
-        },
-        close: {
-        regex: '<p>#gallery-close</p>',
-          replacement: '</div>'
-        }
-      }
-
-
-      this.$refs.container.outerHTML = this.$refs.container.outerHTML
-        .replaceAll(gallery.open.regex, gallery.open.replacement)
-        .replaceAll(gallery.close.regex, gallery.close.replacement)
     })
   },
   methods: {
