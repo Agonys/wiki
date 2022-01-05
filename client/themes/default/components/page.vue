@@ -623,6 +623,16 @@ export default {
 
       this.$refs.container.querySelectorAll('blockquote').forEach(quote => initializeCollapse(quote))
     })
+
+    // -> handle important message marking
+    this.$nextTick(() => {
+      this.$refs.container.querySelectorAll('p').forEach(paragraph => {
+        if (paragraph.textContent.startsWith('!!!')) {
+          paragraph.classList.add('custom--important')
+          paragraph.textContent = paragraph.textContent.substring(3)
+        }
+      })
+    })
   },
   methods: {
     goHome () {
