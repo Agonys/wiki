@@ -572,7 +572,7 @@ export default {
         })
       }
     }
-    
+
     // -> handle important message marking
     this.$nextTick(() => {
       this.$refs.container.querySelectorAll('p').forEach(paragraph => {
@@ -585,21 +585,34 @@ export default {
 
     // -> handle gallery creation from #gallery-open and #gallery-close tags
     this.$nextTick(() => {
+      const allElements = [...this.$refs.container.children[0].children]
+      let isGalleryActive = false
+      let currentGallery = null
 
-      const gallery = {
-        open: {
-          regex: '<p>#gallery-open</p>',
-          replacement: '<div class="custom--gallery">'
-        },
-        close: {
-        regex: '<p>#gallery-close</p>',
-          replacement: '</div>'
+      allElements.forEach(el => {
+        if (el.tagName === 'P') {
+          const textContent = el.textContent
+          if (textContent.startsWith('#gallery-open') && !isGalleryActive) {
+            isGalleryActive = true
+
+            const galleryBlock = document.createElement('div')
+            galleryBlock.classList.add('custom--gallery')
+            el.replaceWith(galleryBlock)
+
+            currentGallery = galleryBlock
+            return
+          }
+
+          if (textContent.startsWith('#gallery-close') && isGalleryActive) {
+            isGalleryActive = false
+            currentGallery = null
+            el.remove()
+            return
+          }
         }
-      }
 
-      this.$refs.container.outerHTML = this.$refs.container.outerHTML
-        .replaceAll(gallery.open.regex, gallery.open.replacement)
-        .replaceAll(gallery.close.regex, gallery.close.replacement)
+        if (isGalleryActive && currentGallery) currentGallery.appendChild(el)
+      })
     })
 
     // -> Handle anchor links within the page contents
@@ -644,10 +657,9 @@ export default {
 
       const initializeCollapse = (el) => {
         createCollase(el)
-
-        el.onclick = () => {
+        el.addEventListener('click', () => {
           el.classList.contains(collapseClassName) ? removeCollapse(el) : createCollase(el)
-        }
+        })
       }
 
       this.$refs.container.querySelectorAll('blockquote').forEach(quote => initializeCollapse(quote))
