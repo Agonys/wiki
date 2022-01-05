@@ -633,6 +633,26 @@ export default {
         }
       })
     })
+
+    // -> handle gallery creation from #gallery-open and #gallery-close tags
+    this.$nextTick(() => {
+
+      const gallery = {
+        open: {
+          regex: '<p>#gallery-open</p>',
+          replacement: '<div class="custom--gallery">'
+        },
+        close: {
+        regex: '<p>#gallery-close</p>',
+          replacement: '</div>'
+        }
+      }
+
+
+      this.$refs.container.outerHTML = this.$refs.container.outerHTML
+        .replaceAll(gallery.open.regex, gallery.open.replacement)
+        .replaceAll(gallery.close.regex, gallery.close.replacement)
+    })
   },
   methods: {
     goHome () {
